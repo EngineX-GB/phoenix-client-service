@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"phoenix-client-service/dao"
 	"phoenix-client-service/model"
-	"time"
 )
 
 /**/
@@ -35,15 +34,11 @@ func HandleFeedbackRequest(res http.ResponseWriter, req *http.Request) {
 func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {
 	if req.Method != "GET" {
 		var entry model.ErrorResponse
-		entry.Timestamp = time.Now()
-		entry.Message = "405 Method Not Supported"
-		entry.Description = "Method must be be a Post"
-		entry.ServiceName = "phoenix-client-service"
+		errorResponse := entry.PublishErrorResponse("405 Method Not Supported", "Method must be be a Post")
 		res.Header().Add("Content-Type", "application/json")
 		res.WriteHeader(405)
-		data, err := json.Marshal(entry)
+		data, err := json.Marshal(errorResponse)
 		if err != nil {
-			//handle error
 			log.Fatal("Unable to form a response, due to JSON marshalling error")
 		}
 		res.Write(data)
@@ -69,7 +64,6 @@ func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {
 		}
 
 		res.Write(data)
-		res.WriteHeader(200)
 		res.Header().Add("Content-Type", "application/json")
 	}
 

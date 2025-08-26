@@ -17,7 +17,10 @@ func GetClientsAvailableToday(searchRequest model.SearchRequest) string {
 		stringBuilder.WriteString(" AND region = '" + searchRequest.Region + "',")
 	}
 	conditionalClause := stringBuilder.String()
-	return "SELECT oid, username, nationality, location FROM tbl_client where date(refresh_time) = date(now())" + conditionalClause[:len(conditionalClause)-1]
+	if len(conditionalClause) > 0 {
+		conditionalClause = conditionalClause[:len(conditionalClause)-1]
+	}
+	return "SELECT oid, username, nationality, location FROM tbl_client where date(refresh_time) = date(now())" + conditionalClause
 }
 
 func GetClientTrackerChanges(userId string) string {
