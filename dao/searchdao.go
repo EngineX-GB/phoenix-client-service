@@ -67,7 +67,28 @@ func ExecuteSearchQuery(searchRequest model.SearchRequest) ([]model.Client, erro
 		if err := rows.Scan(&client.Oid,
 			&client.Username,
 			&client.Nationality,
-			&client.Location); err != nil {
+			&client.Location,
+			&client.Rating,
+			&client.Age,
+			&client.R15,
+			&client.R30,
+			&client.R45,
+			&client.R100,
+			&client.R150,
+			&client.R200,
+			&client.R250,
+			&client.R300,
+			&client.R350,
+			&client.R400,
+			&client.RON,
+			&client.Telephone,
+			&client.UserId,
+			&client.Region,
+			&client.MemberSince,
+			&client.Height,
+			&client.DSize,
+			&client.HairColor,
+			&client.EyeColor); err != nil {
 			return entries, err
 		}
 		entries = append(entries, client)

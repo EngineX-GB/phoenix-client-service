@@ -51,6 +51,7 @@ func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {
 			Region:      region})
 
 		if err != nil {
+			log.Panic(err)
 			log.Panic("Error in retrieving entries from the database")
 		}
 

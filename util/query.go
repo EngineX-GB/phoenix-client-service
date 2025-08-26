@@ -20,7 +20,11 @@ func GetClientsAvailableToday(searchRequest model.SearchRequest) string {
 	if len(conditionalClause) > 0 {
 		conditionalClause = conditionalClause[:len(conditionalClause)-1]
 	}
-	return "SELECT oid, username, nationality, location FROM tbl_client where date(refresh_time) = date(now())" + conditionalClause
+	return "SELECT oid, username, nationality, location, rating, " +
+		"age, rate_15_min, rate_30_min, rate_45_min, rate_1_hour, rate_1_50_hour, rate_2_hour, rate_2_50_hour, " +
+		"rate_3_hour, rate_3_50_hour, rate_4_hour, rate_overnight, telephone, user_id, region, member_since, " +
+		"height, dress_size, hair_colour, eye_colour " +
+		"FROM tbl_client where date(refresh_time) = date(now())" + conditionalClause
 }
 
 func GetClientTrackerChanges(userId string) string {
