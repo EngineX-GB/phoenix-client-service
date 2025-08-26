@@ -1,6 +1,11 @@
 package model
 
-import "time"
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"time"
+)
 
 type ErrorResponse struct {
 	ServiceName string    `json:"serviceName"`
@@ -9,11 +14,17 @@ type ErrorResponse struct {
 	Description string    `json:"description"`
 }
 
-func (e ErrorResponse) PublishErrorResponse(message string, description string) ErrorResponse {
-	var response ErrorResponse
-	response.ServiceName = "phoenix-client-service"
-	response.Description = description
-	response.Message = message
-	response.Timestamp = time.Now()
-	return response
+func (e ErrorResponse) PublishErrorResponse(res http.ResponseWriter, message string, description string) {
+	var errorResponse ErrorResponse
+	errorResponse.ServiceName = "phoenix-client-service"
+	errorResponse.Description = description
+	errorResponse.Message = message
+	errorResponse.Timestamp = time.Now()
+	res.Header().Add("Content-Type", "application/json")
+	res.WriteHeader(405)
+	data, err := json.Marshal(errorResponse)
+	if err != nil {
+		log.Fatal("Unable to form a response, due to JSON marshalling error")
+	}
+	res.Write(data)
 }

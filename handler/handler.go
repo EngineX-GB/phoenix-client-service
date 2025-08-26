@@ -15,7 +15,10 @@ func HandlePingRequest(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleFeedbackRequest(res http.ResponseWriter, req *http.Request) {
-	// do validation on the method to check if the method is a get of not
+	if req.Method != "GET" {
+		var entry model.ErrorResponse
+		entry.PublishErrorResponse(res, "405 Method Not Supported", "Method must be be a GET")
+	}
 	userId := req.URL.Query().Get("userId")
 	entries, err := dao.ExecuteFeedbackQuery(userId)
 	if err != nil {
@@ -34,14 +37,7 @@ func HandleFeedbackRequest(res http.ResponseWriter, req *http.Request) {
 func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {
 	if req.Method != "GET" {
 		var entry model.ErrorResponse
-		errorResponse := entry.PublishErrorResponse("405 Method Not Supported", "Method must be be a Post")
-		res.Header().Add("Content-Type", "application/json")
-		res.WriteHeader(405)
-		data, err := json.Marshal(errorResponse)
-		if err != nil {
-			log.Fatal("Unable to form a response, due to JSON marshalling error")
-		}
-		res.Write(data)
+		entry.PublishErrorResponse(res, "405 Method Not Supported", "Method must be be a GET")
 	} else {
 		// run the query
 		username := req.URL.Query().Get("username")
