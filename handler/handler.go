@@ -17,7 +17,7 @@ func HandlePingRequest(res http.ResponseWriter, req *http.Request) {
 func HandleFeedbackRequest(res http.ResponseWriter, req *http.Request) {
 	if req.Method != "GET" {
 		var entry model.ErrorResponse
-		entry.PublishErrorResponse(res, "405 Method Not Supported", "Method must be be a GET")
+		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a GET")
 	}
 	userId := req.URL.Query().Get("userId")
 	entries, err := dao.ExecuteFeedbackQuery(userId)
@@ -35,9 +35,9 @@ func HandleFeedbackRequest(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {
+	var entry model.ErrorResponse
 	if req.Method != "GET" {
-		var entry model.ErrorResponse
-		entry.PublishErrorResponse(res, "405 Method Not Supported", "Method must be be a GET")
+		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a GET")
 	} else {
 		// run the query
 		username := req.URL.Query().Get("username")
@@ -51,13 +51,15 @@ func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {
 			Region:      region})
 
 		if err != nil {
-			log.Panic(err)
-			log.Panic("Error in retrieving entries from the database")
+			log.Println("[ERROR] Error in retrieving entries from the database. Error: " + err.Error())
+			entry.PublishErrorResponse(res, 500, "Internal Service Error", err.Error())
+			return
 		}
 
 		data, err := json.Marshal(entries)
 		if err != nil {
-			log.Panic("Unable to marshal entries into JSON format")
+			log.Panic("Unable to marshal entries into JSON format. Error: " + err.Error())
+			entry.PublishErrorResponse(res, 500, "Internal Service Error", err.Error())
 		}
 
 		res.Write(data)
