@@ -34,3 +34,23 @@ func GetClientTrackerChanges(userId string) string {
 func GetFeedbackData(userId string) string {
 	return "select oid, service_provider, rating, comment, feedback_date from tbl_feedback where user_id = " + userId
 }
+
+// write query to add a new watchlist entry -> error when the entry exists
+func AddEntryToWatchList(userId string) string {
+	return "insert into tbl_client_watchlist (user_id) values ('" + userId + "')"
+}
+
+// write a query to remove an existing watchlist entry -> error when the entry does not exist
+func RemoveEntryFromWatchList(userId string) string {
+	return "delete from tbl_client_watchlist where user_id = '" + userId + "'"
+}
+
+// write a query to show watchlist entries of clients that are available today
+func ShowTodaysWatchList() string {
+	return "select user_id, username, nationality, telephone, location, rate_1_hour from vw_todays_watchlist"
+}
+
+// write a query to show ALL watchlist entries.
+func ShowAllWatchListEntries() string {
+	return "select c.user_id, c.username, c.nationality, c.telephone, c.location, c.rate_1_hour from tbl_client c inner join tbl_client_watchlist tcw on c.user_id = tcw.user_id"
+}

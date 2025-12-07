@@ -50,6 +50,55 @@ func ExecuteFeedbackQuery(userId string) ([]model.Feedback, error) {
 	return feedbackEntries, nil
 }
 
+func ExecuteGetWatchlist(todaysList bool) ([]model.WatchListEntry, error) {
+	db := connect()
+	var queryString string
+	if todaysList {
+		queryString = util.ShowTodaysWatchList()
+	} else {
+		queryString = util.ShowAllWatchListEntries()
+	}
+	rows, err := db.Query(queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	defer db.Close()
+	var watchListEntries = make([]model.WatchListEntry, 0)
+	for rows.Next() {
+		var watchListEntry model.WatchListEntry
+		if err := rows.Scan(&watchListEntry.UserId,
+			&watchListEntry.Username,
+			&watchListEntry.Nationality,
+			&watchListEntry.Telephone,
+			&watchListEntry.Location,
+			&watchListEntry.Rate); err != nil {
+			return watchListEntries, err
+		}
+		watchListEntries = append(watchListEntries, watchListEntry)
+	}
+	if err = rows.Err(); err != nil {
+		return watchListEntries, err
+	}
+	return watchListEntries, nil
+}
+
+func ExecuteAddWatchListEntry(userId string) (int64, error) {
+	db := connect()
+	result, err := db.Exec(util.AddEntryToWatchList(userId))
+	defer db.Close()
+	if err != nil {
+		print(err.Error())
+		return -1, err
+	}
+
+	insertId, err := result.LastInsertId()
+	if err != nil {
+		panic(err)
+	}
+	return insertId, nil
+}
+
 func ExecuteSearchQuery(searchRequest model.SearchRequest) ([]model.Client, error) {
 	db := connect()
 	rows, err := db.Query(util.GetClientsAvailableToday(searchRequest))

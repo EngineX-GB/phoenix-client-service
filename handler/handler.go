@@ -34,6 +34,74 @@ func HandleFeedbackRequest(res http.ResponseWriter, req *http.Request) {
 	res.Write(data)
 }
 
+func GetAllWatchListEntries(res http.ResponseWriter, req *http.Request) {
+	var entry model.ErrorResponse
+	if req.Method != "GET" {
+		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a GET")
+		return
+	}
+	entries, err := dao.ExecuteGetWatchlist(false)
+	if err != nil {
+		log.Printf("Unable to get watchlist data")
+		log.Panic(err)
+	}
+	data, err := json.Marshal(entries)
+	if err != nil {
+		log.Printf("Unable to marshal entries into Json")
+		log.Panic(err)
+	}
+	res.WriteHeader(200)
+	res.Header().Add("Content-Type", "application/json")
+	res.Write(data)
+}
+
+func GetTodaysWatchListEntries(res http.ResponseWriter, req *http.Request) {
+	var entry model.ErrorResponse
+	if req.Method != "GET" {
+		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a GET")
+		return
+	}
+	entries, err := dao.ExecuteGetWatchlist(true)
+	if err != nil {
+		log.Printf("Unable to get watchlist data")
+		log.Panic(err)
+	}
+	data, err := json.Marshal(entries)
+	if err != nil {
+		log.Printf("Unable to marshal entries into Json")
+		log.Panic(err)
+	}
+	res.WriteHeader(200)
+	res.Header().Add("Content-Type", "application/json")
+	res.Write(data)
+}
+
+func AddUserIdToWatchList(res http.ResponseWriter, req *http.Request) {
+	var entry model.ErrorResponse
+	var watchListRequest model.WatchListRequest
+	if req.Method != "POST" {
+		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a POST")
+		return
+	}
+	err := json.NewDecoder(req.Body).Decode(&watchListRequest)
+	if err != nil {
+		entry.PublishErrorResponse(res, 500, "Error", err.Error())
+		return
+	}
+	newRecordId, err := dao.ExecuteAddWatchListEntry(watchListRequest.UserId)
+	if err != nil {
+		entry.PublishErrorResponse(res, 500, "Error", err.Error())
+		return
+	}
+	if newRecordId == -1 {
+		entry.PublishErrorResponse(res, 500, "Error", "An error has occured when trying to add a watchlist entry")
+		return
+	}
+	// otherwise it's a valid response
+	res.Header().Add("Content-Type", "application/json")
+	res.WriteHeader(int(201))
+}
+
 func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {
 	var entry model.ErrorResponse
 	if req.Method != "GET" {
