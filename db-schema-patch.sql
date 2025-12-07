@@ -29,3 +29,11 @@ create table if not exists tbl_order (
 	notes text,
 	primary key (oid)
 );
+
+create table if not exists tbl_linkedclient (
+	user_id_1 varchar(10) not null,
+	user_id_2 varchar(10) not null,
+	input_type varchar(20) not null,
+	notes text,
+	primary key (user_id_1, user_id_2)
+);
