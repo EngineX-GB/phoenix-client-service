@@ -79,27 +79,50 @@ func GetTodaysWatchListEntries(res http.ResponseWriter, req *http.Request) {
 func AddUserIdToWatchList(res http.ResponseWriter, req *http.Request) {
 	var entry model.ErrorResponse
 	var watchListRequest model.WatchListRequest
-	if req.Method != "POST" {
-		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a POST")
+	if req.Method != "POST" && req.Method != "DELETE" {
+		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a POST or DELETE")
 		return
 	}
-	err := json.NewDecoder(req.Body).Decode(&watchListRequest)
-	if err != nil {
-		entry.PublishErrorResponse(res, 500, "Error", err.Error())
-		return
+
+	if req.Method == "DELETE" {
+		err := json.NewDecoder(req.Body).Decode(&watchListRequest)
+		if err != nil {
+			entry.PublishErrorResponse(res, 500, "Error", err.Error())
+			return
+		}
+		rowsAffected, err := dao.ExecuteDeleteWatchListEntry(watchListRequest.UserId)
+		if err != nil {
+			entry.PublishErrorResponse(res, 500, "Error", err.Error())
+			return
+		}
+		if rowsAffected == -1 {
+			entry.PublishErrorResponse(res, 500, "Error", err.Error())
+			return
+		}
+		res.WriteHeader(204)
+		res.Header().Add("Content-Type", "application/json")
 	}
-	newRecordId, err := dao.ExecuteAddWatchListEntry(watchListRequest.UserId)
-	if err != nil {
-		entry.PublishErrorResponse(res, 500, "Error", err.Error())
-		return
+
+	if req.Method == "POST" {
+		err := json.NewDecoder(req.Body).Decode(&watchListRequest)
+		if err != nil {
+			entry.PublishErrorResponse(res, 500, "Error", err.Error())
+			return
+		}
+		newRecordId, err := dao.ExecuteAddWatchListEntry(watchListRequest.UserId)
+		if err != nil {
+			entry.PublishErrorResponse(res, 500, "Error", err.Error())
+			return
+		}
+		if newRecordId == -1 {
+			entry.PublishErrorResponse(res, 500, "Error", "An error has occured when trying to add a watchlist entry")
+			return
+		}
+		// otherwise it's a valid response
+		res.Header().Add("Content-Type", "application/json")
+		res.WriteHeader(int(201))
 	}
-	if newRecordId == -1 {
-		entry.PublishErrorResponse(res, 500, "Error", "An error has occured when trying to add a watchlist entry")
-		return
-	}
-	// otherwise it's a valid response
-	res.Header().Add("Content-Type", "application/json")
-	res.WriteHeader(int(201))
+
 }
 
 func HandleSearchRequest(res http.ResponseWriter, req *http.Request) {

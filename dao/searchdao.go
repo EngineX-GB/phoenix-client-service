@@ -83,6 +83,20 @@ func ExecuteGetWatchlist(todaysList bool) ([]model.WatchListEntry, error) {
 	return watchListEntries, nil
 }
 
+func ExecuteDeleteWatchListEntry(userId string) (int64, error) {
+	db := connect()
+	result, err := db.Exec(util.DeleteWatchListEntry(userId))
+	if err != nil {
+		print(err.Error())
+		return -1, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+	return rowsAffected, err
+}
+
 func ExecuteAddWatchListEntry(userId string) (int64, error) {
 	db := connect()
 	result, err := db.Exec(util.AddEntryToWatchList(userId))

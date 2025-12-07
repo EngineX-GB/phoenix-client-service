@@ -54,3 +54,7 @@ func ShowTodaysWatchList() string {
 func ShowAllWatchListEntries() string {
 	return "select c.user_id, c.username, c.nationality, c.telephone, c.location, c.rate_1_hour from tbl_client c inner join tbl_client_watchlist tcw on c.user_id = tcw.user_id"
 }
+
+func DeleteWatchListEntry(userId string) string {
+	return "delete from tbl_client_watchlist where user_Id = '" + userId + "'"
+}

@@ -1,0 +1,6 @@
+Add to the watchlist:
+curl -X POST http://localhost:8081/watchlist -d'{"userId": "12364"}'
+
+Delete an entry from the watchlist:
+curl -X DELETE http://localhost:8081/watchlist -d'{"userId": "6098202"}'
+
