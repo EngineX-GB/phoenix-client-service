@@ -2,6 +2,7 @@ package util
 
 import (
 	"phoenix-client-service/model"
+	"strconv"
 	"strings"
 )
 
@@ -57,4 +58,16 @@ func ShowAllWatchListEntries() string {
 
 func DeleteWatchListEntry(userId string) string {
 	return "delete from tbl_client_watchlist where user_Id = '" + userId + "'"
+}
+
+func SaveOrderEntry() string {
+	return "insert into tbl_order (user_id, location, region, date_of_event, time_of_event, creation_date, modification_date, duration, rate, deductions, surplus, price, status, notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+}
+
+func GetAllOrders() string {
+	return "select user_id, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order"
+}
+
+func GetOrdersByYear(year int) string {
+	return "select user_id, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order where year(date_of_event) = " + strconv.Itoa(year) + ""
 }

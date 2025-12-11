@@ -13,5 +13,8 @@ func main() {
 	http.HandleFunc("/watchlist", handler.AddUserIdToWatchList)
 	http.HandleFunc("/watchlist/all", handler.GetAllWatchListEntries)
 	http.HandleFunc("/watchlist/today", handler.GetTodaysWatchListEntries)
+	http.HandleFunc("/orders", handler.HandleSubmitOrder)
+	http.HandleFunc("/orders/all", handler.HandleGetAllOrders)
+	http.HandleFunc("/orders/filter", handler.HandleGetAllOrdersByYear)
 	http.ListenAndServe(":8081", nil)
 }

@@ -162,6 +162,72 @@ func ExecuteSearchQuery(searchRequest model.SearchRequest) ([]model.Client, erro
 	return entries, nil
 }
 
+func SaveOrder(order model.Order) error {
+	db := connect()
+	tx, err := db.Begin()
+	defer tx.Rollback() // defer the rollback so it's always called if something goes wrong
+	defer db.Close()
+
+	if err != nil {
+		print("An error occured while trying to save an order : " + err.Error())
+		return err
+	}
+
+	_, err = tx.Exec(util.SaveOrderEntry(), order.UserId, order.Location, order.Region, order.DateOfEvent,
+		order.TimeOfEvent, order.CreationDate, order.ModifiedDate, order.Duration, order.Rate, order.Deductions,
+		order.Surplus, order.Price, order.Status, order.Notes)
+
+	if err != nil {
+		print("aAn error has occurred when trying to save an order : " + err.Error())
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		print("An error has occurred when trying to save an order : " + err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func GetAllOrders() ([]model.Order, error) {
+	return GetAllOrdersWithFilter(-1)
+}
+
+func GetAllOrdersWithFilter(year int) ([]model.Order, error) {
+	var orders []model.Order
+	db := connect()
+
+	var queryString string
+	if year == -1 {
+		queryString = util.GetAllOrders()
+	} else {
+		queryString = util.GetOrdersByYear(year)
+	}
+
+	rows, err := db.Query(queryString)
+
+	if err != nil {
+		print("An error has occurred when trying to retrieve orders : " + err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+	defer db.Close()
+	for rows.Next() {
+		var order model.Order
+		if err := rows.Scan(&order.UserId, &order.Location, &order.Region, &order.DateOfEvent, &order.TimeOfEvent,
+			&order.Duration, &order.Rate, &order.Deductions, &order.Surplus,
+			&order.Price, &order.Status, &order.Notes); err != nil {
+			return orders, err
+		}
+		orders = append(orders, order)
+	}
+	if err = rows.Err(); err != nil {
+		return orders, err
+	}
+	return orders, nil
+}
+
 func connect() *sql.DB {
 	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/db_phoenix?parseTime=true")
 	if err != nil {
