@@ -79,3 +79,15 @@ func GenerateOrderRequest(userId string) string {
 func UpdateOrderStatus() string {
 	return "update tbl_order set status = ? where oid = ?"
 }
+
+func AddLink() string {
+	return "insert into tbl_link (user_id_1, user_id_2, input_type, notes) values (?, ?, ?, ?)"
+}
+
+func RemoveLink() string {
+	return "delete from tbl_link where user_id_1 = ? and user_id_2 = ?"
+}
+
+func GetAllLinks() string {
+	return "select user_id_1, user_id_2, input_type, notes from tbl_link"
+}

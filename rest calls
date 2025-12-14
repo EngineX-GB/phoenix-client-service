@@ -26,3 +26,24 @@ Payload:
 	"status" : "PROPOSED",
 	"notes" : "NONE"
 }
+
+
+Add a link:
+http://localhost:8081/link
+POST
+Payload:
+{
+	"userId1" : "800128",
+	"userId2" : "4027745",
+	"inputType" : "MANUAL",
+	"notes" : "NONE"
+}
+
+Remove a link:
+http://localhost:8081/link/remove
+DELETE
+Payload:
+{
+	"userId1" : "800128",
+	"userId2" : "4027745"
+}
