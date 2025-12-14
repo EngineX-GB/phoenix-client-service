@@ -194,6 +194,28 @@ func GetAllOrders() ([]model.Order, error) {
 	return GetAllOrdersWithFilter(-1)
 }
 
+func RetrieveOrderRequestDetails(userId string) (model.OrderRequest, error) {
+	var orderRequest model.OrderRequest
+	db := connect()
+	print(util.GenerateOrderRequest(userId))
+	rows, err := db.Query(util.GenerateOrderRequest(userId))
+	if err != nil {
+		print(" : " + err.Error())
+		return orderRequest, err
+	}
+	defer db.Close()
+	defer rows.Close()
+	for rows.Next() {
+		if err := rows.Scan(&orderRequest.UserId, &orderRequest.UserName, &orderRequest.Location,
+			&orderRequest.Region, &orderRequest.Telephone, &orderRequest.R15, &orderRequest.R30, &orderRequest.R45,
+			&orderRequest.R100, &orderRequest.R150, &orderRequest.R200, &orderRequest.R250,
+			&orderRequest.R300, &orderRequest.R350, &orderRequest.R400, &orderRequest.RON); err != nil {
+			print(err.Error())
+		}
+	}
+	return orderRequest, nil
+}
+
 func GetAllOrdersWithFilter(year int) ([]model.Order, error) {
 	var orders []model.Order
 	db := connect()

@@ -71,3 +71,7 @@ func GetAllOrders() string {
 func GetOrdersByYear(year int) string {
 	return "select user_id, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order where year(date_of_event) = " + strconv.Itoa(year) + ""
 }
+
+func GenerateOrderRequest(userId string) string {
+	return "select user_id, username, location, region, telephone, rate_15_min, rate_30_min, rate_45_min, rate_1_hour, rate_1_50_hour, rate_2_hour, rate_2_50_hour, rate_3_hour, rate_3_50_hour, rate_4_hour, rate_overnight from tbl_client where user_id = '" + userId + "' limit 1"
+}

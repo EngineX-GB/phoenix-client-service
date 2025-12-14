@@ -54,6 +54,25 @@ func HandleSubmitOrder(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleGenerateOrderRequest(res http.ResponseWriter, req *http.Request) {
+	var errorResponse model.ErrorResponse
+	if req.Method != "GET" {
+		errorResponse.PublishErrorResponse(res, 405, "Method Not Allowed", "Method must be a GET")
+		return
+	}
+	userId := req.URL.Query().Get("userId")
+	orderRequest, err := dao.RetrieveOrderRequestDetails(userId)
+	if err != nil {
+		errorResponse.PublishErrorResponse(res, 500, "Internal Server Error", err.Error())
+		return
+	}
+	data, err := json.Marshal(orderRequest)
+	if err != nil {
+		errorResponse.PublishErrorResponse(res, 500, "Internal Server Error", err.Error())
+		return
+	}
+	res.WriteHeader(200)
+	res.Header().Add("Content-Type", "application/json")
+	res.Write(data)
 }
 
 func HandleGetAllOrdersByYear(res http.ResponseWriter, req *http.Request) {
