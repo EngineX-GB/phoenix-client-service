@@ -53,6 +53,44 @@ func HandleSubmitOrder(res http.ResponseWriter, req *http.Request) {
 	res.Header().Add("Content-Type", "application/json")
 }
 
+func HandleCancelOrder(res http.ResponseWriter, req *http.Request) {
+	var errorResponse model.ErrorResponse
+	if req.Method != "PUT" {
+		errorResponse.PublishErrorResponse(res, 405, "Method Not Allowed", "Method must be a PUT")
+		return
+	}
+	orderId := req.URL.Query().Get("id")
+	orderIdUint, err := strconv.ParseUint(orderId, 10, 64)
+
+	if err != nil {
+		errorResponse.PublishErrorResponse(res, 500, "Internal Server Error", err.Error())
+		return
+	}
+
+	result, err := dao.UpdateOrderStatus(orderIdUint, "CANCELLED")
+	if err != nil {
+		errorResponse.PublishErrorResponse(res, 500, "Internal Server Error", err.Error())
+		return
+	}
+	var cancelOrderResponse model.CancelOrderResponse
+
+	if result {
+		cancelOrderResponse.OrderId = orderIdUint
+		cancelOrderResponse.OrderStatus = "CANCELLED"
+		res.WriteHeader(200)
+		res.Header().Add("Content-Type", "application/json")
+		data, err := json.Marshal(cancelOrderResponse)
+		if err != nil {
+			panic(err)
+		}
+		res.Write(data)
+	} else {
+		errorResponse.PublishErrorResponse(res, 500, "Internal Server Error", "The order status was not updated.")
+		return
+	}
+
+}
+
 func HandleGenerateOrderRequest(res http.ResponseWriter, req *http.Request) {
 	var errorResponse model.ErrorResponse
 	if req.Method != "GET" {

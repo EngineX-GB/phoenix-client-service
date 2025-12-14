@@ -61,17 +61,21 @@ func DeleteWatchListEntry(userId string) string {
 }
 
 func SaveOrderEntry() string {
-	return "insert into tbl_order (user_id, location, region, date_of_event, time_of_event, creation_date, modification_date, duration, rate, deductions, surplus, price, status, notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	return "insert into tbl_order (user_id, username, location, region, date_of_event, time_of_event, creation_date, modification_date, duration, rate, deductions, surplus, price, status, notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 }
 
 func GetAllOrders() string {
-	return "select user_id, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order"
+	return "select user_id, username, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order"
 }
 
 func GetOrdersByYear(year int) string {
-	return "select user_id, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order where year(date_of_event) = " + strconv.Itoa(year) + ""
+	return "select user_id, username, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order where year(date_of_event) = " + strconv.Itoa(year) + ""
 }
 
 func GenerateOrderRequest(userId string) string {
 	return "select user_id, username, location, region, telephone, rate_15_min, rate_30_min, rate_45_min, rate_1_hour, rate_1_50_hour, rate_2_hour, rate_2_50_hour, rate_3_hour, rate_3_50_hour, rate_4_hour, rate_overnight from tbl_client where user_id = '" + userId + "' limit 1"
+}
+
+func UpdateOrderStatus() string {
+	return "update tbl_order set status = ? where oid = ?"
 }

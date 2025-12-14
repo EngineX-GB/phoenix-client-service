@@ -4,3 +4,25 @@ curl -X POST http://localhost:8081/watchlist -d'{"userId": "12364"}'
 Delete an entry from the watchlist:
 curl -X DELETE http://localhost:8081/watchlist -d'{"userId": "6098202"}'
 
+Submit a new Order:
+http://localhost:8081/orders
+POST
+Payload:
+
+{
+	"userId" : "800128",
+	"username" : "AK41",
+	"location": "London",
+	"region" : "London",
+	"dateOfEvent" : "2020-01-01",
+	"timeOfEvent" : "09:00:00",
+	"creationDate" : "2025-12-01 09:00:00",
+	"modifiedDate" : "2025-12-01 09:00:00",
+	"duration" : 1,
+	"rate" : 100,
+	"deductions" : 10,
+	"surplus" : 0,
+	"price" : 100,
+	"status" : "PROPOSED",
+	"notes" : "NONE"
+}

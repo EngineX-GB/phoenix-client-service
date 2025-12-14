@@ -162,6 +162,31 @@ func ExecuteSearchQuery(searchRequest model.SearchRequest) ([]model.Client, erro
 	return entries, nil
 }
 
+func UpdateOrderStatus(orderId uint64, orderStatus string) (bool, error) {
+	db := connect()
+	tx, err := db.Begin()
+	defer tx.Rollback()
+	defer db.Close()
+
+	if err != nil {
+		print("An error occured while trying to update an order : " + err.Error())
+		return false, err
+	}
+
+	_, err = tx.Exec(util.UpdateOrderStatus(), orderStatus, orderId)
+
+	if err != nil {
+		print("An error occured while trying to update an order : " + err.Error())
+		return false, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		print("An error occured while trying to update an order : " + err.Error())
+		return false, err
+	}
+	return true, nil
+}
+
 func SaveOrder(order model.Order) error {
 	db := connect()
 	tx, err := db.Begin()
@@ -173,7 +198,7 @@ func SaveOrder(order model.Order) error {
 		return err
 	}
 
-	_, err = tx.Exec(util.SaveOrderEntry(), order.UserId, order.Location, order.Region, order.DateOfEvent,
+	_, err = tx.Exec(util.SaveOrderEntry(), order.UserId, order.UserName, order.Location, order.Region, order.DateOfEvent,
 		order.TimeOfEvent, order.CreationDate, order.ModifiedDate, order.Duration, order.Rate, order.Deductions,
 		order.Surplus, order.Price, order.Status, order.Notes)
 
@@ -217,7 +242,7 @@ func RetrieveOrderRequestDetails(userId string) (model.OrderRequest, error) {
 }
 
 func GetAllOrdersWithFilter(year int) ([]model.Order, error) {
-	var orders []model.Order
+	var orders = make([]model.Order, 0)
 	db := connect()
 
 	var queryString string
@@ -237,7 +262,7 @@ func GetAllOrdersWithFilter(year int) ([]model.Order, error) {
 	defer db.Close()
 	for rows.Next() {
 		var order model.Order
-		if err := rows.Scan(&order.UserId, &order.Location, &order.Region, &order.DateOfEvent, &order.TimeOfEvent,
+		if err := rows.Scan(&order.UserId, &order.UserName, &order.Location, &order.Region, &order.DateOfEvent, &order.TimeOfEvent,
 			&order.Duration, &order.Rate, &order.Deductions, &order.Surplus,
 			&order.Price, &order.Status, &order.Notes); err != nil {
 			return orders, err

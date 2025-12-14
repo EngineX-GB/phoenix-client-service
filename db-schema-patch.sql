@@ -14,6 +14,7 @@ where user_id in (select user_id from tbl_client_watchlist) and date(refresh_tim
 create table if not exists tbl_order (
 	oid integer not null auto_increment,
 	user_id varchar(10),
+	username varchar(20),
 	location varchar(200),
     region varchar(100),
 	date_of_event date,

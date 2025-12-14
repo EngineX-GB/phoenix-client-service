@@ -3,6 +3,7 @@ package model
 type Order struct {
 	Oid          uint64 `json:"oid"`
 	UserId       string `json:"userId"`
+	UserName     string `json:"username"`
 	Location     string `json:"location"`
 	Region       string `json:"region"`
 	DateOfEvent  string `json:"dateOfEvent"`
