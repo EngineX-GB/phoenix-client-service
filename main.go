@@ -16,5 +16,6 @@ func main() {
 	http.HandleFunc("/orders", handler.HandleSubmitOrder)
 	http.HandleFunc("/orders/all", handler.HandleGetAllOrders)
 	http.HandleFunc("/orders/filter", handler.HandleGetAllOrdersByYear)
+	http.HandleFunc("/orders/generateRequest", handler.HandleGenerateOrderRequest)
 	http.ListenAndServe(":8081", nil)
 }
