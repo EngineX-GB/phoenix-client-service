@@ -30,12 +30,3 @@ create table if not exists tbl_order (
 	notes text,
 	primary key (oid)
 );
-
-create table if not exists tbl_link (
-	user_id_1 varchar(10) not null,
-	user_id_2 varchar(10) not null,
-	input_type varchar(20) not null,
-	notes text,
-	timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	primary key (user_id_1, user_id_2)
-);
