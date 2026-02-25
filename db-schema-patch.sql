@@ -17,6 +17,7 @@ create table if not exists tbl_order (
 	username varchar(20),
 	location varchar(200),
     region varchar(100),
+	order_reference varchar(50),
 	date_of_event date,
 	time_of_event time,
 	creation_date datetime,
