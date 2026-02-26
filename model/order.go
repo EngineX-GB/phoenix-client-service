@@ -1,7 +1,7 @@
 package model
 
 type Order struct {
-	Oid          uint64 `json:"oid"`
+	Oid          uint64 `json:"id"`
 	UserId       string `json:"userId"`
 	UserName     string `json:"username"`
 	Location     string `json:"location"`

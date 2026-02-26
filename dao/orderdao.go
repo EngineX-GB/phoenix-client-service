@@ -104,7 +104,7 @@ func GetAllOrdersWithFilter(year int) ([]model.Order, error) {
 	defer db.Close()
 	for rows.Next() {
 		var order model.Order
-		if err := rows.Scan(&order.UserId, &order.UserName, &order.Location, &order.Region, &order.DateOfEvent, &order.TimeOfEvent,
+		if err := rows.Scan(&order.Oid, &order.UserId, &order.UserName, &order.Location, &order.Region, &order.DateOfEvent, &order.TimeOfEvent,
 			&order.Duration, &order.Rate, &order.Deductions, &order.Surplus,
 			&order.Price, &order.Status, &order.Notes); err != nil {
 			return orders, err

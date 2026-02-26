@@ -9,7 +9,7 @@ import (
 func GetClientsAvailableToday(searchRequest model.SearchRequest) string {
 	var stringBuilder strings.Builder
 	if searchRequest.Username != "" {
-		stringBuilder.WriteString(" AND username = '" + searchRequest.Username + "',")
+		stringBuilder.WriteString(" AND username like '%" + searchRequest.Username + "%',")
 	} else if searchRequest.UserId != "" {
 		stringBuilder.WriteString(" AND user_Id = '" + searchRequest.UserId + "',")
 	} else if searchRequest.Nationality != "" {
@@ -65,11 +65,11 @@ func SaveOrderEntry() string {
 }
 
 func GetAllOrders() string {
-	return "select user_id, username, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order"
+	return "select oid, user_id, username, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order"
 }
 
 func GetOrdersByYear(year int) string {
-	return "select user_id, username, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order where year(date_of_event) = " + strconv.Itoa(year) + ""
+	return "select oid, user_id, username, location, region, date_of_event, time_of_event, duration, rate, deductions, surplus, price, status, notes from tbl_order where year(date_of_event) = " + strconv.Itoa(year) + ""
 }
 
 func GenerateOrderRequest(userId string) string {
