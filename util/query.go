@@ -9,23 +9,31 @@ import (
 func GetClientsAvailableToday(searchRequest model.SearchRequest) string {
 	var stringBuilder strings.Builder
 	if searchRequest.Username != "" {
-		stringBuilder.WriteString(" AND username like '%" + searchRequest.Username + "%',")
-	} else if searchRequest.UserId != "" {
-		stringBuilder.WriteString(" AND user_Id = '" + searchRequest.UserId + "',")
-	} else if searchRequest.Nationality != "" {
-		stringBuilder.WriteString(" AND nationality = '" + searchRequest.Nationality + "',")
-	} else if searchRequest.Region != "" {
-		stringBuilder.WriteString(" AND region = '" + searchRequest.Region + "',")
+		stringBuilder.WriteString(" AND c.username like '%" + searchRequest.Username + "%'")
+	}
+	if searchRequest.UserId != "" {
+		stringBuilder.WriteString(" AND c.user_Id = '" + searchRequest.UserId + "'")
+	}
+	if searchRequest.Nationality != "" {
+		stringBuilder.WriteString(" AND c.nationality = '" + searchRequest.Nationality + "'")
+	}
+	if searchRequest.Region != "" {
+		stringBuilder.WriteString(" AND c.region = '" + searchRequest.Region + "'")
 	}
 	conditionalClause := stringBuilder.String()
-	if len(conditionalClause) > 0 {
-		conditionalClause = conditionalClause[:len(conditionalClause)-1]
-	}
-	return "SELECT oid, username, nationality, location, rating, " +
-		"age, rate_15_min, rate_30_min, rate_45_min, rate_1_hour, rate_1_50_hour, rate_2_hour, rate_2_50_hour, " +
-		"rate_3_hour, rate_3_50_hour, rate_4_hour, rate_overnight, telephone, user_id, region, member_since, " +
-		"height, dress_size, hair_colour, eye_colour " +
-		"FROM tbl_client where date(refresh_time) = date(now())" + conditionalClause
+	// if len(conditionalClause) > 0 {
+	// 	conditionalClause = conditionalClause[:len(conditionalClause)-1]
+	// }
+
+	print(conditionalClause)
+	return "SELECT c.oid, c.username, c.nationality, c.location, c.rating, " +
+		"c.age, c.rate_15_min, c.rate_30_min, c.rate_45_min, c.rate_1_hour, c.rate_1_50_hour, c.rate_2_hour, c.rate_2_50_hour, " +
+		"c.rate_3_hour, c.rate_3_50_hour, c.rate_4_hour, c.rate_overnight, c.telephone, c.user_id, c.region, c.member_since, " +
+		"c.height, c.dress_size, c.hair_colour, c.eye_colour, " +
+		"ca.minimum_charge, ca.maximum_charge, ca.number_of_days_in_service, ca.percentage_available, ca.total_regions_travelled, ca.previously_serviced_bb " +
+		"FROM tbl_client c " +
+		"INNER JOIN tbl_client_analytics ca ON ca.user_id = c.user_id " +
+		"where date(c.refresh_time) = date(now())" + conditionalClause
 }
 
 func GetClientTrackerChanges(userId string) string {

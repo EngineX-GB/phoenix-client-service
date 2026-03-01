@@ -151,7 +151,14 @@ func ExecuteSearchQuery(searchRequest model.SearchRequest) ([]model.Client, erro
 			&client.Height,
 			&client.DSize,
 			&client.HairColor,
-			&client.EyeColor); err != nil {
+			&client.EyeColor,
+			&client.MinimumCharge,
+			&client.MaximumCharge,
+			&client.NumberOfDaysInService,
+			&client.PercentageAvailable,
+			&client.TotalRegionsTravelled,
+			&client.PreviouslyServicedBB,
+		); err != nil {
 			return entries, err
 		}
 		entries = append(entries, client)
