@@ -41,7 +41,7 @@ func GetClientTrackerChanges(userId string) string {
 }
 
 func GetFeedbackData(userId string) string {
-	return "select oid, service_provider, rating, comment, feedback_date from tbl_feedback where user_id = " + userId
+	return "select id, by_username, rating_date, rating, disputed, feedback, feedback_response from tbl_feedback_v2 where rating_type = 'Escort Booking' and user_id = " + userId
 }
 
 // write query to add a new watchlist entry -> error when the entry exists

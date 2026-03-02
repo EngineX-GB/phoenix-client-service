@@ -36,10 +36,12 @@ func ExecuteFeedbackQuery(userId string) ([]model.Feedback, error) {
 	for rows.Next() {
 		var feedback model.Feedback
 		if err := rows.Scan(&feedback.Oid,
-			&feedback.ServiceProvider,
+			&feedback.ByUsername,
+			&feedback.RatingDate,
 			&feedback.Rating,
-			&feedback.Comment,
-			&feedback.FeedbackDate); err != nil {
+			&feedback.Disputed,
+			&feedback.Feedback,
+			&feedback.FeedbackResponse); err != nil {
 			return feedbackEntries, err
 		}
 		feedbackEntries = append(feedbackEntries, feedback)
