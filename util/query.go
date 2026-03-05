@@ -40,8 +40,12 @@ func GetClientTrackerChanges(userId string) string {
 	return "select oid, username, user_id, field_value, old_value, new_value, record_datetime from vw_view_client_changes"
 }
 
-func GetFeedbackData(userId string) string {
-	return "select id, by_username, rating_date, rating, disputed, feedback, feedback_response from tbl_feedback_v2 where rating_type = 'Escort Booking' and user_id = " + userId
+func GetFeedbackData(userId string, offsetId int64, pageDirection string) string {
+	var directionChar = ">"
+	if pageDirection == "FORWARD" {
+		directionChar = "<"
+	}
+	return "select id, by_username, rating_date, rating, disputed, feedback, feedback_response from tbl_feedback_v2 where rating_type = 'Escort Booking' and user_id = " + userId + " and id " + directionChar + " " + strconv.FormatInt(offsetId, 10) + " ORDER BY id DESC LIMIT 10"
 }
 
 // write query to add a new watchlist entry -> error when the entry exists
@@ -98,4 +102,8 @@ func RemoveLink() string {
 
 func GetAllLinks() string {
 	return "select user_id_1, user_id_2, input_type, notes from tbl_link"
+}
+
+func GetMinMaxIdValuesForFeedbackRecord(userId string) string {
+	return "select min(id), max(id) from tbl_feedback_v2 where user_id = " + userId
 }

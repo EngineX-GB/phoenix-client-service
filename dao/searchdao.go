@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"database/sql"
 	"phoenix-client-service/datasource"
 	"phoenix-client-service/model"
 	"phoenix-client-service/util"
@@ -23,9 +24,38 @@ func ExecuteClientTrackerChangesQuery(userId string) ([]model.TrackerChange, err
 	return nil, nil
 }
 
-func ExecuteFeedbackQuery(userId string) ([]model.Feedback, error) {
+func ExecuteMinMaxMarkersForFeedbackQuery(userId string) (model.QueryMarker, error) {
 	db := datasource.Connect()
-	rows, err := db.Query(util.GetFeedbackData(userId))
+	defer db.Close()
+
+	var marker model.QueryMarker
+	var min sql.NullInt64
+	var max sql.NullInt64
+
+	row := db.QueryRow(util.GetMinMaxIdValuesForFeedbackRecord(userId))
+	err := row.Scan(&min, &max)
+	if err != nil {
+		return marker, err
+	}
+
+	if min.Valid {
+		marker.Min = min.Int64
+	} else {
+		marker.Min = 0
+	}
+
+	if max.Valid {
+		marker.Max = max.Int64
+	} else {
+		marker.Max = 0
+	}
+
+	return marker, nil
+}
+
+func ExecuteFeedbackQuery(userId string, offsetId int64, pageDirection string) ([]model.Feedback, error) {
+	db := datasource.Connect()
+	rows, err := db.Query(util.GetFeedbackData(userId, offsetId, pageDirection))
 	if err != nil {
 		return nil, err
 	}

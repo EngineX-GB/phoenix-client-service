@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"phoenix-client-service/dao"
 	"phoenix-client-service/model"
+	"strconv"
 )
 
 /**/
@@ -20,11 +21,43 @@ func HandleFeedbackRequest(res http.ResponseWriter, req *http.Request) {
 		entry.PublishErrorResponse(res, 405, "Method Not Supported", "Method must be a GET")
 	}
 	userId := req.URL.Query().Get("userId")
-	entries, err := dao.ExecuteFeedbackQuery(userId)
+	pageDirection := req.URL.Query().Get("pageDirection") // either 'FORWARD' or 'BACKWARD'
+	offsetRecord := req.URL.Query().Get("offset")         // the id of the last record in the page
+
+	var offsetId int64
+
+	// as this will be using database pagination, get the min and max ids of the rows for records
+	// specific to the userId
+
+	marker, err := dao.ExecuteMinMaxMarkersForFeedbackQuery(userId)
 	if err != nil {
 		log.Panic(err)
 	}
-	data, err := json.Marshal(entries)
+
+	if offsetRecord != "" {
+		i, err := strconv.Atoi(offsetRecord)
+		if err != nil {
+			offsetId = marker.Max + 1
+		} else {
+			offsetId = int64(i)
+		}
+	}
+
+	if pageDirection == "" || offsetRecord == "" {
+		offsetId = marker.Max + 1
+		pageDirection = "FORWARD"
+	}
+
+	entries, err := dao.ExecuteFeedbackQuery(userId, offsetId, pageDirection)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	var feedbackResult model.FeedbackResult
+	feedbackResult.Headers = marker
+	feedbackResult.FeedbackData = entries
+
+	data, err := json.Marshal(feedbackResult)
 	if err != nil {
 		log.Printf("Unable to marshal entries into json")
 		log.Panic(err)
