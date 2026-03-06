@@ -15,6 +15,7 @@ func main() {
 	http.HandleFunc("/watchlist/today", handler.GetTodaysWatchListEntries)
 	http.HandleFunc("/orders", handler.HandleSubmitOrder)
 	http.HandleFunc("/orders/all", handler.HandleGetAllOrders)
+	http.HandleFunc("/orders/import", handler.HandleImportOrderFeed)
 	http.HandleFunc("/orders/filter", handler.HandleGetAllOrdersByYear)
 	http.HandleFunc("/orders/generateRequest", handler.HandleGenerateOrderRequest)
 	http.HandleFunc("/orders/cancel", handler.HandleCancelOrder)

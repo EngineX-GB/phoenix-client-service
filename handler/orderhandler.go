@@ -2,9 +2,13 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"phoenix-client-service/dao"
 	"phoenix-client-service/model"
+	"phoenix-client-service/service"
 	"strconv"
 )
 
@@ -138,4 +142,35 @@ func HandleGetAllOrdersByYear(res http.ResponseWriter, req *http.Request) {
 	res.Header().Add("Content-Type", "application/json")
 	res.WriteHeader(200)
 	res.Write(data)
+}
+
+/*
+*
+POST method to
+*/
+func HandleImportOrderFeed(res http.ResponseWriter, req *http.Request) {
+
+	var errorResponse model.ErrorResponse
+	if req.Method != "POST" {
+		errorResponse.PublishErrorResponse(res, 405, "Method Not Allowed", "Method must be a PUT")
+		return
+	}
+
+	file, metadata, err := req.FormFile("file")
+	if err != nil {
+		fmt.Println("Error in reading uploaded file : ", err)
+		return
+	}
+	defer file.Close()
+	log.Println("Loading file : " + metadata.Filename)
+
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error in reading uploaded file : ", err)
+		return
+	}
+	contents := string(fileBytes[:])
+
+	//TODO: Read the file here and process it 06-03-2026
+	service.ReadOrderFeed(contents)
 }

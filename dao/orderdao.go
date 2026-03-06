@@ -42,7 +42,7 @@ func SaveOrder(order model.Order) error {
 		return err
 	}
 
-	_, err = tx.Exec(util.SaveOrderEntry(), order.UserId, order.UserName, order.Location, order.Region, order.DateOfEvent,
+	_, err = tx.Exec(util.SaveOrderEntry(), order.OrderReference, order.UserId, order.UserName, order.Location, order.Region, order.DateOfEvent,
 		order.TimeOfEvent, order.CreationDate, order.ModifiedDate, order.Duration, order.Rate, order.Deductions,
 		order.Surplus, order.Price, order.Status, order.Notes)
 

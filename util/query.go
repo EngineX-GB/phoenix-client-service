@@ -73,7 +73,7 @@ func DeleteWatchListEntry(userId string) string {
 }
 
 func SaveOrderEntry() string {
-	return "insert into tbl_order (user_id, username, location, region, date_of_event, time_of_event, creation_date, modification_date, duration, rate, deductions, surplus, price, status, notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	return "insert into tbl_order (order_reference, user_id, username, location, region, date_of_event, time_of_event, creation_date, modification_date, duration, rate, deductions, surplus, price, status, notes) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 }
 
 func GetAllOrders() string {
