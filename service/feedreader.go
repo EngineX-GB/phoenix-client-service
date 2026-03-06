@@ -3,12 +3,37 @@ package service
 import (
 	"encoding/csv"
 	"log"
+	"net/url"
 	"phoenix-client-service/dao"
 	"phoenix-client-service/model"
 	"strconv"
 	"strings"
 	"time"
 )
+
+func ReadWatchListFeed(contents string) {
+	reader := strings.NewReader(contents)
+	csvReader := csv.NewReader(reader)
+	csvReader.Comma = '|'
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		log.Println("Error in reading the CSV file")
+		return
+	}
+
+	for _, record := range records {
+		// a watchlist entry in the feed will only have one field in it: the URL containing the userId
+		u, err := url.Parse(record[0])
+		if err != nil {
+			panic(err)
+		}
+		q := u.Query()
+		userId := q.Get("userID")
+		if userId != "" {
+			dao.ExecuteAddWatchListEntry(userId)
+		}
+	}
+}
 
 func ReadOrderFeed(contents string) {
 	reader := strings.NewReader(contents)

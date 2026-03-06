@@ -21,11 +21,6 @@ func GetClientsAvailableToday(searchRequest model.SearchRequest) string {
 		stringBuilder.WriteString(" AND c.region = '" + searchRequest.Region + "'")
 	}
 	conditionalClause := stringBuilder.String()
-	// if len(conditionalClause) > 0 {
-	// 	conditionalClause = conditionalClause[:len(conditionalClause)-1]
-	// }
-
-	print(conditionalClause)
 	return "SELECT c.oid, c.username, c.nationality, c.location, c.rating, " +
 		"c.age, c.rate_15_min, c.rate_30_min, c.rate_45_min, c.rate_1_hour, c.rate_1_50_hour, c.rate_2_hour, c.rate_2_50_hour, " +
 		"c.rate_3_hour, c.rate_3_50_hour, c.rate_4_hour, c.rate_overnight, c.telephone, c.user_id, c.region, c.member_since, " +
