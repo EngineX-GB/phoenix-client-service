@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"phoenix-client-service/model"
 	"strconv"
 	"strings"
@@ -101,4 +102,11 @@ func GetAllLinks() string {
 
 func GetMinMaxIdValuesForFeedbackRecord(userId string) string {
 	return "select min(id), max(id) from tbl_feedback_v2 where user_id = " + userId
+}
+
+func GetServiceReportHeadlines(userId string) string {
+	return fmt.Sprintf(
+		"SELECT id, user_id, STR_TO_DATE(meet_date, '%%Y%%m%%d%%H%%i%%s'), report_rating, candidate_description FROM tbl_service_report_v2 WHERE user_id = '%s' ORDER BY id DESC;",
+		userId,
+	)
 }

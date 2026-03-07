@@ -53,6 +53,32 @@ func ExecuteMinMaxMarkersForFeedbackQuery(userId string) (model.QueryMarker, err
 	return marker, nil
 }
 
+func ExecuteServiceReportHeadlineQuery(userId string) ([]model.ServiceReportHeadline, error) {
+	db := datasource.Connect()
+	rows, err := db.Query(util.GetServiceReportHeadlines(userId))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	defer db.Close()
+	var serviceReportHeadlineEntries = make([]model.ServiceReportHeadline, 0)
+	for rows.Next() {
+		var serviceReportHeadline model.ServiceReportHeadline
+		if err := rows.Scan(&serviceReportHeadline.Oid,
+			&serviceReportHeadline.UserId,
+			&serviceReportHeadline.MeetDate,
+			&serviceReportHeadline.ReportRating,
+			&serviceReportHeadline.HeadLine); err != nil {
+			return serviceReportHeadlineEntries, err
+		}
+		serviceReportHeadlineEntries = append(serviceReportHeadlineEntries, serviceReportHeadline)
+	}
+	if err = rows.Err(); err != nil {
+		return serviceReportHeadlineEntries, err
+	}
+	return serviceReportHeadlineEntries, nil
+}
+
 func ExecuteFeedbackQuery(userId string, offsetId int64, pageDirection string) ([]model.Feedback, error) {
 	db := datasource.Connect()
 	rows, err := db.Query(util.GetFeedbackData(userId, offsetId, pageDirection))
