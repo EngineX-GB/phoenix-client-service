@@ -23,6 +23,7 @@ type Client struct {
 	R350                  int             `json:"r350"`
 	R400                  int             `json:"r400"`
 	RON                   int             `json:"rOn"`
+	D100                  int             `json:"d100"`
 	Telephone             string          `json:"telephone"`
 	Url                   string          `json:"url"`
 	RefreshTime           time.Time       `json:"refreshTime"`

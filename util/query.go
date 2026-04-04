@@ -24,7 +24,7 @@ func GetClientsAvailableToday(searchRequest model.SearchRequest) string {
 	conditionalClause := stringBuilder.String()
 	return "SELECT c.oid, c.username, c.nationality, c.location, c.rating, " +
 		"c.age, c.rate_15_min, c.rate_30_min, c.rate_45_min, c.rate_1_hour, c.rate_1_50_hour, c.rate_2_hour, c.rate_2_50_hour, " +
-		"c.rate_3_hour, c.rate_3_50_hour, c.rate_4_hour, c.rate_overnight, c.telephone, c.user_id, c.region, c.member_since, " +
+		"c.rate_3_hour, c.rate_3_50_hour, c.rate_4_hour, c.rate_overnight, c.diff_1_hour, c.telephone, c.user_id, c.region, c.member_since, " +
 		"c.height, c.dress_size, c.hair_colour, c.eye_colour, " +
 		"ca.minimum_charge, ca.maximum_charge, ca.number_of_days_in_service, ca.percentage_available, ca.total_regions_travelled, ca.previously_serviced_bb " +
 		"FROM tbl_client c " +

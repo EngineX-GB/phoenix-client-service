@@ -202,6 +202,7 @@ func ExecuteSearchQuery(searchRequest model.SearchRequest) ([]model.Client, erro
 			&client.R350,
 			&client.R400,
 			&client.RON,
+			&client.D100,
 			&client.Telephone,
 			&client.UserId,
 			&client.Region,
