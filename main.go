@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"phoenix-client-service/handler"
 )
@@ -23,5 +24,10 @@ func main() {
 	http.HandleFunc("/orders/cancel", handler.HandleCancelOrder)
 	http.HandleFunc("/link", handler.HandleAddLink)
 	http.HandleFunc("/link/remove", handler.HandleRemoveLink)
-	http.ListenAndServe(":8081", nil)
+	http.HandleFunc("/monitor/ping", handler.PingHandler)
+	http.HandleFunc("/ws", handler.WsHandler)
+	err := http.ListenAndServe(":8081", nil)
+	if err != nil {
+		fmt.Println("Error in starting server", err)
+	}
 }
