@@ -63,7 +63,7 @@ func StartPinger(serviceName string, serverURL string) (stop func()) {
 						Operation:   "ping",
 						ServiceName: serviceName,
 						Status:      "OK",
-						Detail:      "OK",
+						Detail:      serviceName + " is pinged successfully",
 					},
 				}
 				jsonBytes, _ := json.Marshal(msg)
