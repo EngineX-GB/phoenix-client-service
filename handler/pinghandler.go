@@ -12,7 +12,7 @@ import (
 var (
 	serviceNames = map[string]bool{
 		"market":    false,
-		"ingestion": true,
+		"ingestion": false,
 	}
 
 	// Stores cancel functions for each running pinger

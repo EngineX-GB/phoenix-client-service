@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"phoenix-client-service/ws"
 
 	"github.com/gorilla/websocket"
 )
@@ -19,22 +20,29 @@ func WsHandler(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error Upgrading:", err)
 		return
 	}
-	defer conn.Close()
 
-	// listen to incoming messages
+	// Register client
+	ws.Hub.Mu.Lock()
+	ws.Hub.Clients[conn] = true
+	ws.Hub.Mu.Unlock()
+
+	fmt.Println("Client connected")
+
+	// Listen for incoming messages (optional)
 	for {
-
-		_, message, err := conn.ReadMessage()
+		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Error in reading message", err)
-			break
-		}
-		fmt.Println("[INFO] Received message : %s\\n", string(message))
+			fmt.Println("Client disconnected:", err)
 
-		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
-			fmt.Println("Error writing message", err)
+			ws.Hub.Mu.Lock()
+			delete(ws.Hub.Clients, conn)
+			ws.Hub.Mu.Unlock()
+
+			conn.Close()
 			break
 		}
+
+		fmt.Println("Received:", string(msg))
 	}
 
 }

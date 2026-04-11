@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"phoenix-client-service/handler"
+	"phoenix-client-service/ws"
 )
 
 func main() {
+
+	// Run the websocket hub (for injecting message into)
+	go ws.Hub.Run()
 
 	http.HandleFunc("/ping", handler.HandlePingRequest)
 	http.HandleFunc("/search", handler.HandleSearchRequest)
