@@ -29,6 +29,7 @@ func main() {
 	http.HandleFunc("/link", handler.HandleAddLink)
 	http.HandleFunc("/link/remove", handler.HandleRemoveLink)
 	http.HandleFunc("/monitor/ping", handler.PingHandler)
+	http.HandleFunc("/notifications/publish", handler.HandleNotificationEmitter)
 	http.HandleFunc("/ws", handler.WsHandler)
 	err := http.ListenAndServe(":8081", nil)
 	if err != nil {
