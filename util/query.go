@@ -110,3 +110,43 @@ func GetServiceReportHeadlines(userId string) string {
 		userId,
 	)
 }
+
+func GetAllEmailConfigs() string {
+	return "SELECT oid, name, hostname, port from tbl_email_config"
+}
+
+func GetAllEmailAccounts() string {
+	return "SELECT oid, username, password, formal_name, email_config_id FROM tbl_email_account"
+}
+
+func UpdateEmailConfig(emailConfig model.SMTPConfig) string {
+	return fmt.Sprintf("update tbl_emailconfig set name = '%s', hostname = '%s', port = '%d' where oid = %d", emailConfig.Name, emailConfig.Host, emailConfig.Port, emailConfig.Oid)
+}
+
+func UpdateEmailAccount(emailAccount model.EmailAccount) string {
+	return fmt.Sprintf("update tbl_email_account set username = '%s', password = '%s', formal_name = '%s', email_config_id = %d where oid = %d", emailAccount.Username, emailAccount.Password, emailAccount.FormalName, emailAccount.SmtpConfigId, emailAccount.Oid)
+}
+
+func AddEmailConfig(emailConfig model.SMTPConfig) string {
+	return fmt.Sprintf("INSERT INTO tbl_email_config (name, hostname, port) values ('%s', '%s', '%d')", emailConfig.Name, emailConfig.Host, emailConfig.Port)
+}
+
+func AddEmailAccount(emailAccount model.EmailAccount) string {
+	return fmt.Sprintf("INSERT INTO tbl_email_account (username, password, formal_name, email_config_id) values ('%s','%s','%s', %d)", emailAccount.Username, emailAccount.Password, emailAccount.FormalName, emailAccount.SmtpConfigId)
+}
+
+func DeleteEmailConfig(oid int64) string {
+	return fmt.Sprintf("DELETE FROM tbl_email_config WHERE oid = %d", oid)
+}
+
+func DeleteEmailAccount(oid int64) string {
+	return fmt.Sprintf("DELETE FROM tbl_email_account where oid = %d", oid)
+}
+
+func GetEmailAccountById(oid int64) string {
+	return fmt.Sprintf("SELECT oid, username, password, formal_name, email_config_id FROM tbl_email_account where oid = %d", oid)
+}
+
+func GetEmailConfigById(oid int64) string {
+	return fmt.Sprintf("SELECT oid, name, hostname, port FROM tbl_email_config where oid = %d", oid)
+}

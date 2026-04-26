@@ -30,6 +30,13 @@ func main() {
 	http.HandleFunc("/link/remove", handler.HandleRemoveLink)
 	http.HandleFunc("/monitor/ping", handler.PingHandler)
 	http.HandleFunc("/notifications/publish", handler.HandleNotificationEmitter)
+	http.HandleFunc("/comms/email/send", handler.HandleSendEmail)
+	http.HandleFunc("/comms/email/configs", handler.GetEmailConfigs)
+	http.HandleFunc("/comms/email/accounts", handler.GetEmailAccounts)
+	http.HandleFunc("/comms/email/accounts/add", handler.AddEmailAccount)
+	http.HandleFunc("/comms/email/config/add", handler.AddEmailConfig)
+	http.HandleFunc("/comms/email/account/remove", handler.DeleteEmailAccount)
+	http.HandleFunc("/comms/email/config/remove", handler.DeleteEmailConfig)
 	http.HandleFunc("/ws", handler.WsHandler)
 	err := http.ListenAndServe(":8081", nil)
 	if err != nil {
