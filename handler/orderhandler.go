@@ -10,6 +10,9 @@ import (
 	"phoenix-client-service/model"
 	"phoenix-client-service/service"
 	"strconv"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 func HandleGetAllOrders(res http.ResponseWriter, req *http.Request) {
@@ -47,6 +50,13 @@ func HandleSubmitOrder(res http.ResponseWriter, req *http.Request) {
 		errorResponse.PublishErrorResponse(res, 500, "Internal Server Error", err.Error())
 		return
 	}
+
+	// as this is a new order, set the default values to some of the fields as we wouldn't expect a client to add these:
+
+	requestPayload.CreationDate = time.Now().Format("2006-01-02 15:04:05")
+	requestPayload.ModifiedDate = time.Now().Format("2006-01-02 15:04:05")
+	requestPayload.OrderReference = uuid.New().String()
+
 	//put the record in the database.
 	err = dao.SaveOrder(requestPayload)
 	if err != nil {

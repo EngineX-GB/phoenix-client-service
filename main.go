@@ -5,9 +5,12 @@ import (
 	"net/http"
 	"phoenix-client-service/handler"
 	"phoenix-client-service/ws"
+	"runtime"
 )
 
 func main() {
+
+	fmt.Println("Running Phoenix Client Service for " + runtime.GOOS)
 
 	// Run the websocket hub (for injecting message into)
 	go ws.Hub.Run()
@@ -38,8 +41,10 @@ func main() {
 	http.HandleFunc("/comms/email/account/remove", handler.DeleteEmailAccount)
 	http.HandleFunc("/comms/email/config/remove", handler.DeleteEmailConfig)
 	http.HandleFunc("/ws", handler.WsHandler)
+
 	err := http.ListenAndServe(":8081", nil)
 	if err != nil {
 		fmt.Println("Error in starting server", err)
 	}
+
 }
