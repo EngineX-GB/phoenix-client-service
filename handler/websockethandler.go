@@ -26,13 +26,13 @@ func WsHandler(res http.ResponseWriter, req *http.Request) {
 	ws.Hub.Clients[conn] = true
 	ws.Hub.Mu.Unlock()
 
-	fmt.Println("Client connected")
+	fmt.Println("[DEBUG] Client connected")
 
 	// Listen for incoming messages (optional)
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Client disconnected:", err)
+			fmt.Println("[DEBUG] Client disconnected:", err)
 
 			ws.Hub.Mu.Lock()
 			delete(ws.Hub.Clients, conn)
@@ -42,7 +42,7 @@ func WsHandler(res http.ResponseWriter, req *http.Request) {
 			break
 		}
 
-		fmt.Println("Received:", string(msg))
+		fmt.Println("[DEBUG] Received:", string(msg))
 	}
 
 }

@@ -56,7 +56,7 @@ func PingHandler(res http.ResponseWriter, req *http.Request) {
 		// Start goroutine
 		var serverURL string
 		if serviceName == "market" {
-			serverURL = "http://localhost:8082"
+			serverURL = "http://localhost:8081"
 		}
 		if serviceName == "ingestion" {
 			serverURL = "http://localhost:8000"

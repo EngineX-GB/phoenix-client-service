@@ -18,6 +18,7 @@ func HandleNotificationEmitter(res http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(&notificationPayload)
 	if err != nil {
 		entry.PublishErrorResponse(res, 500, "Internal Server Error", err.Error())
+		fmt.Println("[DEBUG] Error in publishing notification : " + err.Error())
 		return
 	}
 
