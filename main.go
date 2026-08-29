@@ -41,6 +41,7 @@ func main() {
 	http.HandleFunc("/comms/email/account/remove", handler.DeleteEmailAccount)
 	http.HandleFunc("/comms/email/config/remove", handler.DeleteEmailConfig)
 	http.HandleFunc("/market/load/region", handler.LoadMarketByRegion)
+	http.HandleFunc("/feedback/load", handler.HandleLoadFeedbackRequest)
 	http.HandleFunc("/ws", handler.WsHandler)
 
 	err := http.ListenAndServe(":8081", nil)
