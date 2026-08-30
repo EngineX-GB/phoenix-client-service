@@ -9,6 +9,7 @@ type Client struct {
 	Oid                   int64           `json:"oid"`
 	Username              string          `json:"username"`
 	Nationality           string          `json:"nationality"`
+	Ethnicity             string          `json:"ethnicity"`
 	Location              string          `json:"location"`
 	Rating                int             `json:"rating"`
 	Age                   int             `json:"age"`
