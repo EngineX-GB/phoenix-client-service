@@ -150,3 +150,35 @@ func GetEmailAccountById(oid int64) string {
 func GetEmailConfigById(oid int64) string {
 	return fmt.Sprintf("SELECT oid, name, hostname, port FROM tbl_email_config where oid = %d", oid)
 }
+
+func GetAllOverridesQuery() string {
+	return "SELECT o.oid, o.user_id, c.username, o.json FROM tbl_data_override o INNER JOIN tbl_client c ON c.user_id = o.user_id"
+}
+
+func GetAllOverridesQueryByUserId(userId string) string {
+	return fmt.Sprintf("SELECT o.oid, o.user_id, c.username, o.json FROM tbl_data_override o INNER JOIN tbl_client c ON c.user_id = o.user_id where o.user_id = %s", userId)
+}
+
+func GetAllOverridesDataQueryByUserId(userId string) string {
+	return fmt.Sprintf("SELECT o.json FROM tbl_data_override o where o.user_id = %s", userId)
+}
+
+func AddOverride(userId string, json string) string {
+	return fmt.Sprintf("INSERT INTO tbl_data_override (user_id, json) VALUES ('%s', '%s')", userId, json)
+}
+
+func DeleteOverrideById(oid int64) string {
+	return fmt.Sprintf("DELETE FROM tbl_data_override WHERE oid = %d", oid)
+}
+
+func UpdateOverrideById(oid int64, json string) string {
+	return fmt.Sprintf("UPDATE tbl_data_override SET json = '%s' WHERE oid = %d", json, oid)
+}
+
+func UpdateOverrideByUserId(userId string, json string) string {
+	return fmt.Sprintf("UPDATE tbl_data_override SET json = '%s' WHERE user_id = '%s'", json, userId)
+}
+
+func DeleteOverrideByUserId(userId string) string {
+	return fmt.Sprintf("DELETE FROM tbl_data_override WHERE user_id = '%s'", userId)
+}
