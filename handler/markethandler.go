@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"phoenix-client-service/model"
+	"phoenix-client-service/service"
 	"time"
 )
 
@@ -28,7 +29,7 @@ func LoadMarketByRegion(res http.ResponseWriter, req *http.Request) {
 		Timeout: 30 * time.Second,
 	}
 
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:8001/load/region/"+regionId, nil)
+	req, err := http.NewRequest(http.MethodPost, service.GetMarketConnectorEndpoint()+"/load/region/"+regionId, nil)
 	if err != nil {
 		print(err.Error())
 		errorResponse.PublishErrorResponse(res, 500, "Internal Service Error", err.Error())
