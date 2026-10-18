@@ -22,7 +22,7 @@ func GetClientsAvailableToday(searchRequest model.SearchRequest) string {
 		stringBuilder.WriteString(" AND c.region = '" + searchRequest.Region + "'")
 	}
 	conditionalClause := stringBuilder.String()
-	return "SELECT c.oid, c.username, c.nationality, c.location, c.rating, " +
+	return "SELECT c.oid, c.username, c.nationality, c.ethnicity, c.location, c.rating, " +
 		"c.age, c.rate_15_min, c.rate_30_min, c.rate_45_min, c.rate_1_hour, c.rate_1_50_hour, c.rate_2_hour, c.rate_2_50_hour, " +
 		"c.rate_3_hour, c.rate_3_50_hour, c.rate_4_hour, c.rate_overnight, c.diff_1_hour, c.telephone, c.user_id, c.region, c.member_since, " +
 		"c.height, c.dress_size, c.hair_colour, c.eye_colour, " +
@@ -149,4 +149,36 @@ func GetEmailAccountById(oid int64) string {
 
 func GetEmailConfigById(oid int64) string {
 	return fmt.Sprintf("SELECT oid, name, hostname, port FROM tbl_email_config where oid = %d", oid)
+}
+
+func GetAllOverridesQuery() string {
+	return "SELECT o.oid, o.user_id, c.username, o.json FROM tbl_data_override o INNER JOIN tbl_client c ON c.user_id = o.user_id"
+}
+
+func GetAllOverridesQueryByUserId(userId string) string {
+	return fmt.Sprintf("SELECT o.oid, o.user_id, c.username, o.json FROM tbl_data_override o INNER JOIN tbl_client c ON c.user_id = o.user_id where o.user_id = %s", userId)
+}
+
+func GetAllOverridesDataQueryByUserId(userId string) string {
+	return fmt.Sprintf("SELECT o.json FROM tbl_data_override o where o.user_id = %s", userId)
+}
+
+func AddOverride(userId string, json string) string {
+	return fmt.Sprintf("INSERT INTO tbl_data_override (user_id, json) VALUES ('%s', '%s')", userId, json)
+}
+
+func DeleteOverrideById(oid int64) string {
+	return fmt.Sprintf("DELETE FROM tbl_data_override WHERE oid = %d", oid)
+}
+
+func UpdateOverrideById(oid int64, json string) string {
+	return fmt.Sprintf("UPDATE tbl_data_override SET json = '%s' WHERE oid = %d", json, oid)
+}
+
+func UpdateOverrideByUserId(userId string, json string) string {
+	return fmt.Sprintf("UPDATE tbl_data_override SET json = '%s' WHERE user_id = '%s'", json, userId)
+}
+
+func DeleteOverrideByUserId(userId string) string {
+	return fmt.Sprintf("DELETE FROM tbl_data_override WHERE user_id = '%s'", userId)
 }

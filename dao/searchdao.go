@@ -188,6 +188,7 @@ func ExecuteSearchQuery(searchRequest model.SearchRequest) ([]model.Client, erro
 		if err := rows.Scan(&client.Oid,
 			&client.Username,
 			&client.Nationality,
+			&client.Ethnicity,
 			&client.Location,
 			&client.Rating,
 			&client.Age,

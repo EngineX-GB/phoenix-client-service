@@ -3,14 +3,37 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"phoenix-client-service/handler"
+	"phoenix-client-service/service"
 	"phoenix-client-service/ws"
 	"runtime"
+	"text/tabwriter"
 )
+
+func envDump() {
+	fmt.Println()
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+
+	fmt.Fprintln(w, "PROPERTY\tVALUE")
+	fmt.Fprintln(w, "--------\t-----")
+	fmt.Fprintf(w, "Environment\t%s\n", service.GetEnvironment())
+	fmt.Fprintf(w, "Datasource Host\t%s\n", service.GetDataSourceHostname())
+	fmt.Fprintf(w, "Datasource Name\t%s\n", service.GetDataSourceName())
+	fmt.Fprintf(w, "Ingestion Service Endpoint\t%s\n", service.GetIngestionServiceEndpoint())
+	fmt.Fprintf(w, "Market Connector Endpoint\t%s\n", service.GetMarketConnectorEndpoint())
+
+	w.Flush()
+	fmt.Println()
+
+}
 
 func main() {
 
 	fmt.Println("Running Phoenix Client Service for " + runtime.GOOS)
+
+	envDump()
 
 	// Run the websocket hub (for injecting message into)
 	go ws.Hub.Run()
@@ -40,9 +63,14 @@ func main() {
 	http.HandleFunc("/comms/email/config/add", handler.AddEmailConfig)
 	http.HandleFunc("/comms/email/account/remove", handler.DeleteEmailAccount)
 	http.HandleFunc("/comms/email/config/remove", handler.DeleteEmailConfig)
+	http.HandleFunc("/market/load/region", handler.LoadMarketByRegion)
+	http.HandleFunc("/feedback/load", handler.HandleLoadFeedbackRequest)
+	http.HandleFunc("/override/add", handler.HandleAddOverrideRequest)
+	http.HandleFunc("/override/all", handler.HandleGetAllOverridesRequest)
+	http.HandleFunc("/override/remove", handler.HandleDeleteOverrideRequest)
 	http.HandleFunc("/ws", handler.WsHandler)
 
-	err := http.ListenAndServe(":8081", nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", service.GetServicePort()), nil)
 	if err != nil {
 		fmt.Println("Error in starting server", err)
 	}
