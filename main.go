@@ -1,15 +1,23 @@
 package main
 
 import (
+	_ "embed"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"phoenix-client-service/handler"
+	"phoenix-client-service/model"
 	"phoenix-client-service/service"
 	"phoenix-client-service/ws"
 	"runtime"
 	"text/tabwriter"
 )
+
+// go will embed version.json. The directive below will reference the version.json
+
+//go:embed version.json
+var versionJSON []byte
 
 func envDump() {
 	fmt.Println()
@@ -29,9 +37,19 @@ func envDump() {
 
 }
 
+func getVersion() string {
+
+	var v model.Version
+
+	if err := json.Unmarshal(versionJSON, &v); err != nil {
+		panic(err)
+	}
+	return v.VersionNumber
+}
+
 func main() {
 
-	fmt.Println("Running Phoenix Client Service for " + runtime.GOOS)
+	fmt.Println("Running Phoenix Client Service " + getVersion() + " for " + runtime.GOOS)
 
 	envDump()
 
