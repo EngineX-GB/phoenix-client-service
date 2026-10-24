@@ -1,12 +1,21 @@
 # To run this script:
 # powershell.exe -ExecutionPolicy Bypass -File "release.ps1"
-# for the .NET client (phoenix-client-ui)
-
+#
+# This script must only be run on the updated master branch.
+#
 # Note: For usage:
 # 1. Ensure the github cli directory exists
 # 2. Ensure git directory exists
-# 3. Ensure dotnet directory exists
-# 4. Update the script to put the correct GH Token.
+# 3. Ensure python directory exists
+# 4. Reference the GH token in an external file and reference it in this pipeline.
+#
+# Pipeline process:
+# 1. Build the project to a binary to ensure that the project builds successfully
+# 2. Update the version.json file to increment the patch version number (the third number in n.n.n)
+# 3. Tag the master branch with the new version
+# 4. Commit the updated version file and push it into the master branch
+# 5. Build the project again (containing the new updated version.json file embedded in the binary)
+# 6. Push the artefact as a release against the new version.
 
 function GetGHToken{
     param([string]$TOKEN_FILE_PATH)
@@ -20,7 +29,7 @@ function GetGHToken{
 }
 
 # Tools setup
-$TOKEN_FILE_PATH="C:\Users\Dell\Documents\Development\code\python\phoenix-market-connector\deploy\scm-config.properties"
+$TOKEN_FILE_PATH="$env:USERPROFILE\Documents\Development\code\deployment\scm-config.properties"
 $GH_TOKEN = GetGHToken($TOKEN_FILE_PATH)
 $env:GH_TOKEN=$GH_TOKEN
 
@@ -92,9 +101,6 @@ $VERSIONS_FILE = Join-Path $PROJECT_HOME_DIRECTORY "version.json"
 $VERSIONS = Get-Content $VERSIONS_FILE -Raw | ConvertFrom-Json
 $SERVICE_VERSION = $VERSIONS."version"
 
-Write-Host $SERVICE_VERSION
-
-
 # The increment the minor version
 
 # Split the version into parts
@@ -112,14 +118,24 @@ $VERSIONS."version" = $NEW_VERSION
 # Save the JSON back to the file
 $VERSIONS | ConvertTo-Json -Depth 10 | Set-Content $VERSIONS_FILE
 
-Write-Host "[SUCCESS] Version updated from $VERSIONS to $NEW_VERSION"
-
+Write-Host "[INFO] Version updated from $SERVICE_VERSION to $NEW_VERSION"
 
 # Take the new version and tag the git master branch with this new version
 
-Write-Host "[INFO] Creating tag on branch"
+Write-Host "[INFO] Creating tag on branch ($NEW_VERSION)"
 & $GIT_BIN tag -a $NEW_VERSION -m "Version $NEW_VERSION"
+
+IF ($LASTEXITCODE -ne 0) {
+    Write-Host "[ERROR] An error occurred when trying to push to github.com: $LASTEXITCODE"
+    exit $LASTEXITCODE
+}
+
 & $GIT_BIN push origin $NEW_VERSION
+
+IF ($LASTEXITCODE -ne 0) {
+    Write-Host "[ERROR] An error occurred when trying to push to github.com: $LASTEXITCODE"
+    exit $LASTEXITCODE
+}
 
 # Here, we need to commit the file version.json that has the up to date change log
 
@@ -128,6 +144,10 @@ Write-Host "[INFO] Committing updated version.json to repository"
 & $GIT_BIN commit -m "Updating version.json change log with the new version ($NEW_VERSION)."
 & $GIT_BIN push origin master
 
+IF ($LASTEXITCODE -ne 0) {
+    Write-Host "[ERROR] An error occurred when trying to push to github.com: $LASTEXITCODE"
+    exit $LASTEXITCODE
+}
 
 # now do an optimised release binary (exe) of the service.
 & $GOLANG_HOME\bin\go.exe build
