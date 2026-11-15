@@ -2,6 +2,17 @@ package config
 
 import "os"
 
+func GetListOfConfigs() map[string]string {
+	var configMap = make(map[string]string)
+	configMap["ENV"] = GetEnvironment()
+	configMap["DATASOURCE_HOSTNAME"] = GetDataSourceHostname()
+	configMap["DATASOURCE_USERNAME"] = GetDataSourceUsername()
+	configMap["DATASOURCE_NAME"] = GetDataSourceName()
+	configMap["MARKET_CONNECTOR_ENDPOINT"] = GetMarketConnectorEndpoint()
+	configMap["INGESTION_SERVICE_ENDPOINT"] = GetIngestionServiceEndpoint()
+	return configMap
+}
+
 func getEnvProperty(envVariable string, defaultValue string) string {
 	env := os.Getenv(envVariable)
 	if env == "" {

@@ -86,6 +86,7 @@ func main() {
 	http.HandleFunc("/override/add", handler.HandleAddOverrideRequest)
 	http.HandleFunc("/override/all", handler.HandleGetAllOverridesRequest)
 	http.HandleFunc("/override/remove", handler.HandleDeleteOverrideRequest)
+	http.HandleFunc("/config", handler.ConfigHandler)
 	http.HandleFunc("/ws", handler.WsHandler)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%s", config.GetServicePort()), nil)
