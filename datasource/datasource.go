@@ -1,9 +1,12 @@
 package datasource
 
-import "database/sql"
+import (
+	"database/sql"
+	"phoenix-client-service/config"
+)
 
 func Connect() *sql.DB {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/db_phoenix?parseTime=true")
+	db, err := sql.Open("mysql", config.GetDataSourceUsername()+":"+config.GetDataSourcePassword()+"@tcp("+config.GetDataSourceHostname()+")/"+config.GetDataSourceName()+"?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"phoenix-client-service/config"
 	"phoenix-client-service/handler"
 	"phoenix-client-service/model"
-	"phoenix-client-service/service"
 	"phoenix-client-service/ws"
 	"runtime"
 	"text/tabwriter"
@@ -26,11 +26,11 @@ func envDump() {
 
 	fmt.Fprintln(w, "PROPERTY\tVALUE")
 	fmt.Fprintln(w, "--------\t-----")
-	fmt.Fprintf(w, "Environment\t%s\n", service.GetEnvironment())
-	fmt.Fprintf(w, "Datasource Host\t%s\n", service.GetDataSourceHostname())
-	fmt.Fprintf(w, "Datasource Name\t%s\n", service.GetDataSourceName())
-	fmt.Fprintf(w, "Ingestion Service Endpoint\t%s\n", service.GetIngestionServiceEndpoint())
-	fmt.Fprintf(w, "Market Connector Endpoint\t%s\n", service.GetMarketConnectorEndpoint())
+	fmt.Fprintf(w, "Environment\t%s\n", config.GetEnvironment())
+	fmt.Fprintf(w, "Datasource Host\t%s\n", config.GetDataSourceHostname())
+	fmt.Fprintf(w, "Datasource Name\t%s\n", config.GetDataSourceName())
+	fmt.Fprintf(w, "Ingestion Service Endpoint\t%s\n", config.GetIngestionServiceEndpoint())
+	fmt.Fprintf(w, "Market Connector Endpoint\t%s\n", config.GetMarketConnectorEndpoint())
 
 	w.Flush()
 	fmt.Println()
@@ -88,7 +88,7 @@ func main() {
 	http.HandleFunc("/override/remove", handler.HandleDeleteOverrideRequest)
 	http.HandleFunc("/ws", handler.WsHandler)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%s", service.GetServicePort()), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", config.GetServicePort()), nil)
 	if err != nil {
 		fmt.Println("Error in starting server", err)
 	}

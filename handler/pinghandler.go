@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"phoenix-client-service/config"
 	"phoenix-client-service/model"
 	"phoenix-client-service/service"
 	"sync"
@@ -56,10 +57,10 @@ func PingHandler(res http.ResponseWriter, req *http.Request) {
 		// Start goroutine
 		var serverURL string
 		if serviceName == "market" {
-			serverURL = service.GetMarketConnectorEndpoint()
+			serverURL = config.GetMarketConnectorEndpoint()
 		}
 		if serviceName == "ingestion" {
-			serverURL = service.GetIngestionServiceEndpoint()
+			serverURL = config.GetIngestionServiceEndpoint()
 		}
 
 		stopFunc := service.StartPinger(serviceName, serverURL)

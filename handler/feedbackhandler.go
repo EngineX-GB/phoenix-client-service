@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"phoenix-client-service/config"
 	"phoenix-client-service/model"
-	"phoenix-client-service/service"
 )
 
 func HandleLoadFeedbackRequest(res http.ResponseWriter, req *http.Request) {
@@ -34,7 +34,7 @@ func HandleLoadFeedbackRequest(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	newReq, err := http.NewRequest(http.MethodPost, service.GetMarketConnectorEndpoint()+"/load/feedbackv2", bytes.NewBuffer(body))
+	newReq, err := http.NewRequest(http.MethodPost, config.GetMarketConnectorEndpoint()+"/load/feedbackv2", bytes.NewBuffer(body))
 	if err != nil {
 		errorResponse.PublishErrorResponse(res, 500, "Internal Server Error", err.Error())
 		fmt.Println("[DEBUG] Error in forwarding request to market connector : " + err.Error())
