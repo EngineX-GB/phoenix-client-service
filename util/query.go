@@ -182,3 +182,12 @@ func UpdateOverrideByUserId(userId string, json string) string {
 func DeleteOverrideByUserId(userId string) string {
 	return fmt.Sprintf("DELETE FROM tbl_data_override WHERE user_id = '%s'", userId)
 }
+
+func GetTelephoneNumberSearchResults(queryStringArg string) string {
+	return fmt.Sprintf(`
+	select user_id, username, nationality, ethnicity, telephone from tbl_client where telephone like '%s'
+	union
+	select c.user_id, c.username, c.nationality, c.ethnicity, t.old_value from tbl_client_changes_tracker t
+	inner join tbl_client c on c.user_id = t.user_id where t.field_value = 'telephone' and old_value like '%s';
+	`, queryStringArg, queryStringArg)
+}
