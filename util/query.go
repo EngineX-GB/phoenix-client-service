@@ -191,3 +191,13 @@ func GetTelephoneNumberSearchResults(queryStringArg string) string {
 	inner join tbl_client c on c.user_id = t.user_id where t.field_value = 'telephone' and old_value like '%s';
 	`, queryStringArg, queryStringArg)
 }
+
+func GetUsernameSearchResults(queryStringArg string) string {
+	return fmt.Sprintf(`
+	select user_id, username, username, nationality, ethnicity, true as current_username from tbl_client where username like '%s'
+	union
+	(select c.user_id, t.old_value, c.username, c.nationality, c.ethnicity, false as current_username from tbl_client_changes_tracker t
+	inner join tbl_client c on c.user_id = t.user_id where t.field_value = 'username' and old_value like '%s' order by c.username)
+	order by 3;
+	`, queryStringArg, queryStringArg)
+}
